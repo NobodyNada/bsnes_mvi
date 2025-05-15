@@ -13,10 +13,10 @@ auto Gamepad::data() -> uint2 {
   case  1: return y;
   case  2: return select;
   case  3: return start;
-  case  4: return up & !down;
-  case  5: return down & !up;
-  case  6: return left & !right;
-  case  7: return right & !left;
+  case  4: return up;
+  case  5: return down;
+  case  6: return left;
+  case  7: return right;
   case  8: return a;
   case  9: return x;
   case 10: return l;
