@@ -133,45 +133,45 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   static const struct retro_trace_descriptor_t constexpr trace_fields[] = {
       {
           .name = "PC",
-          .offset = offsetof(trace_buffer_entry, registers.pc),
           .len = 3,
+          .offset = offsetof(trace_buffer_entry, registers.pc),
           .flags = (retro_trace_field_flags_t)RETRO_TRACE_FIELD_TYPE_PC,
       },
       {
           .name = "A",
-          .offset = offsetof(trace_buffer_entry, registers.a),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.a),
       },
       {
           .name = "X",
-          .offset = offsetof(trace_buffer_entry, registers.x),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.x),
       },
       {
           .name = "Y",
-          .offset = offsetof(trace_buffer_entry, registers.y),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.y),
       },
       {
           .name = "S",
-          .offset = offsetof(trace_buffer_entry, registers.s),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.s),
           .flags = (retro_trace_field_flags_t)RETRO_TRACE_FIELD_TYPE_SP,
       },
       {
           .name = "D",
-          .offset = offsetof(trace_buffer_entry, registers.d),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.d),
       },
       {
           .name = "DB",
-          .offset = offsetof(trace_buffer_entry, registers.b),
           .len = 2,
+          .offset = offsetof(trace_buffer_entry, registers.b),
       },
       {
           .name = "P",
-          .offset = offsetof(trace_buffer_entry, processor_status),
           .len = 1,
+          .offset = offsetof(trace_buffer_entry, processor_status),
       },
       {
           .name = NULL,
