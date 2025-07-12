@@ -9,6 +9,7 @@ CPU cpu;
 #include "timing.cpp"
 #include "irq.cpp"
 #include "serialization.cpp"
+#include "trace.cpp"
 
 auto CPU::synchronizeSMP() -> void {
   if(smp.clock < 0) scheduler.resume(smp.thread);
@@ -34,7 +35,10 @@ auto CPU::Enter() -> void {
 auto CPU::main() -> void {
   if(r.wai) return instructionWait();
   if(r.stp) return instructionStop();
-  if(!status.interruptPending) return instruction();
+  if(!status.interruptPending) {
+      instruction();
+      return trace();
+  }
 
   if(status.nmiPending) {
     status.nmiPending = 0;

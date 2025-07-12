@@ -1,3 +1,5 @@
+#include "../../target-libretro/libretro_trace_extensions.h"
+
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline auto interruptPending() const -> bool override { return status.interruptPending; }
   inline auto pio() const -> uint8 { return io.pio; }
@@ -67,6 +69,122 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
+
+  // trace.cpp
+  struct retro_trace_ctx_t trace_ctx = {
+      .fields = trace_fields,
+  };
+
+  bool trace_started;
+  r24 trace_pc;
+
+  struct trace_buffer_entry {
+      retro_trace_elem_header_t header;
+      Processor::WDC65816::Registers registers;
+      uint8_t processor_status;
+      struct retro_trace_memory_effect_t memory_effects[];
+  };
+
+  static const struct retro_trace_descriptor_bit_t constexpr trace_bits[] = {
+      {
+          .name = "C",
+          .desc = "Carry",
+          .mask = 0x01
+      },
+      {
+          .name = "Z",
+          .desc = "Zero",
+          .mask = 0x02
+      },
+      {
+          .name = "I",
+          .desc = "Interrupts disabled",
+          .mask = 0x04
+      },
+      {
+          .name = "D",
+          .desc = "Decimal mode",
+          .mask = 0x08
+      },
+      {
+          .name = "X",
+          .desc = "8-bit index registers",
+          .mask = 0x10
+      },
+      {
+          .name = "M",
+          .desc = "8-bit accumulator",
+          .mask = 0x20
+      },
+      {
+          .name = "V",
+          .desc = "Overflow",
+          .mask = 0x40
+      },
+      {
+          .name = "N",
+          .desc = "Negative",
+          .mask = 0x80
+      },
+      {
+          .name = NULL
+      }
+  };
+  static const struct retro_trace_descriptor_t constexpr trace_fields[] = {
+      {
+          .name = "PC",
+          .offset = offsetof(trace_buffer_entry, registers.pc),
+          .len = 3,
+          .flags = (retro_trace_field_flags_t)RETRO_TRACE_FIELD_TYPE_PC,
+      },
+      {
+          .name = "A",
+          .offset = offsetof(trace_buffer_entry, registers.a),
+          .len = 2,
+      },
+      {
+          .name = "X",
+          .offset = offsetof(trace_buffer_entry, registers.x),
+          .len = 2,
+      },
+      {
+          .name = "Y",
+          .offset = offsetof(trace_buffer_entry, registers.y),
+          .len = 2,
+      },
+      {
+          .name = "S",
+          .offset = offsetof(trace_buffer_entry, registers.s),
+          .len = 2,
+          .flags = (retro_trace_field_flags_t)RETRO_TRACE_FIELD_TYPE_SP,
+      },
+      {
+          .name = "D",
+          .offset = offsetof(trace_buffer_entry, registers.d),
+          .len = 2,
+      },
+      {
+          .name = "DB",
+          .offset = offsetof(trace_buffer_entry, registers.b),
+          .len = 2,
+      },
+      {
+          .name = "P",
+          .offset = offsetof(trace_buffer_entry, processor_status),
+          .len = 1,
+      },
+      {
+          .name = NULL,
+          .offset = offsetof(trace_buffer_entry, memory_effects)
+      }
+  };
+
+  vector<uint8> trace_buffer;
+  vector<uint8> fetch_buffer;
+  vector<retro_trace_memory_effect_t> memory_effect_buffer;
+  auto fetch() -> uint8_t override;
+  auto trace();
+  void flush_trace_buffer();
 
   uint8 wram[128 * 1024];
   vector<Thread*> coprocessors;

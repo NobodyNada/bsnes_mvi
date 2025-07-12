@@ -1,5 +1,6 @@
 #include <cassert>
 #include "libretro.h"
+#include "libretro_trace_extensions.h"
 
 static retro_environment_t environ_cb;
 static retro_video_refresh_t video_cb;
@@ -735,6 +736,8 @@ RETRO_API bool retro_load_game(const retro_game_info *game)
 
     retro_memory_map map={SuperFamicom::bus.host_memory_descriptors.data(), (unsigned)SuperFamicom::bus.host_memory_descriptors.size()};
     environ_cb(RETRO_ENVIRONMENT_SET_MEMORY_MAPS, &map);
+
+    environ_cb(RETRO_ENVIRONMENT_SET_TRACE_CONTEXT, &SuperFamicom::cpu.trace_ctx);
 
 	emulator->connect(SuperFamicom::ID::Port::Controller1, SuperFamicom::ID::Device::Gamepad);
 	emulator->connect(SuperFamicom::ID::Port::Controller2, SuperFamicom::ID::Device::Gamepad);

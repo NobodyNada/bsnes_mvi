@@ -96,6 +96,13 @@ auto CPU::readDMA(uint addr, uint8 data) -> uint8 {
 }
 
 auto CPU::writeRAM(uint addr, uint8 data) -> void {
+  if (trace_ctx.callback) {
+    memory_effect_buffer.append((retro_trace_memory_effect_t){
+      .address = addr,
+      .data = data,
+      .mask = 0xff
+    });
+  }
   wram[addr] = data;
 }
 

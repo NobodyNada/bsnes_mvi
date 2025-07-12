@@ -100,4 +100,19 @@ auto CPU::serialize(serializer& s) -> void {
     s.integer(channel.hdmaCompleted);
     s.integer(channel.hdmaDoTransfer);
   }
+
+  uint64_t fetch_buffer_length = fetch_buffer.size();
+  s.integer(fetch_buffer_length);
+  fetch_buffer.reserve(8);
+  s.array(fetch_buffer.data(), max(fetch_buffer_length, 8));
+  fetch_buffer.reallocate(fetch_buffer_length);
+
+  uint64_t mem_effect_buffer_length = memory_effect_buffer.size();
+  s.integer(mem_effect_buffer_length);
+  memory_effect_buffer.reserve(8);
+  s.array((uint8*)memory_effect_buffer.data(), max(mem_effect_buffer_length, 8 * sizeof(retro_trace_memory_effect_t)));
+  memory_effect_buffer.reallocate(mem_effect_buffer_length);
+
+  s.boolean(trace_started);
+  s.integer(trace_pc.d);
 }

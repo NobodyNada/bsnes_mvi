@@ -60,6 +60,7 @@ auto System::runToSaveFast() -> void {
   for(auto coprocessor : cpu.coprocessors) {
     synchronize(coprocessor->thread);
   }
+  cpu.flush_trace_buffer();
 }
 
 auto System::runToSaveStrict() -> void {
@@ -92,6 +93,7 @@ auto System::runToSaveStrict() -> void {
 
     break;
   }
+  cpu.flush_trace_buffer();
 }
 
 auto System::frameEvent() -> void {
@@ -105,6 +107,7 @@ auto System::frameEvent() -> void {
     }
   }
   Memory::GlobalWriteEnable = false;
+  cpu.flush_trace_buffer();
 }
 
 auto System::load(Emulator::Interface* interface) -> bool {

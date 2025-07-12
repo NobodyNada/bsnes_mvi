@@ -51,7 +51,7 @@ struct WDC65816 {
   alwaysinline auto idle2() -> void;
   alwaysinline auto idle4(uint16 x, uint16 y) -> void;
   alwaysinline auto idle6(uint16 address) -> void;
-  alwaysinline auto fetch() -> uint8;
+  virtual      auto fetch() -> uint8;
   alwaysinline auto pull() -> uint8;
                auto push(uint8 data) -> void;
   alwaysinline auto pullN() -> uint8;
